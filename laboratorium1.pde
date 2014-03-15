@@ -36,14 +36,14 @@ void draw() {
   float tmpX = 0, tmpY = 0;
   float angle = 0;
   
-//  if (    mouseY != prevMouseY
-//      ||  mouseX != prevMouseX) {
+  if (    mouseY != prevMouseY
+      ||  mouseX != prevMouseX) {
     
     /* Count delta of move */
     shiftDeltas();
     dys[0] = mouseY - prevMouseY;
     dxs[0] = mouseX - prevMouseX;
-//  }
+  }
     
     /* Drawing */
     tmpX = mouseX;
