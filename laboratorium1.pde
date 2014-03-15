@@ -13,13 +13,13 @@ String screenShotExtension = ".png";
 int prevMouseX = 0, prevMouseY = 0;
 int segmentLength = 10;
 
-int[] dxs = new int[20];
-int[] dys = new int[20];
+int[] xs = new int[20];
+int[] ys = new int[20];
 
 /* --- INITIALIZATION --- */
 void setup() {
-  for (int i=0 ; i<dxs.length ; i++) {
-    dxs[i] = dys[i] = 0;
+  for (int i=0 ; i< xs.length ; i++) {
+    xs[i] = ys[i] = 0;
   }
   
   size(sizeX, sizeY);
@@ -33,36 +33,24 @@ void setup() {
 
 /* --- MAIN LOOP --- */
 void draw() {
-  float tmpX = 0, tmpY = 0;
-  float angle = 0;
+//  float angle = 0;
   
-  if (    mouseY != prevMouseY
-      ||  mouseX != prevMouseX) {
+  if (    mouseY != ys[0]
+      ||  mouseX != xs[0]) {
     
     /* Count delta of move */
-    shiftDeltas();
-    dys[0] = mouseY - prevMouseY;
-    dxs[0] = mouseX - prevMouseX;
+    shiftCoords();
+    ys[0] = mouseY;
+    xs[0] = mouseX;
   }
     
     /* Drawing */
-    tmpX = mouseX;
-    tmpY = mouseY;
     
     image(background, 0, 0, sizeX, sizeY);
-    for (int i=0 ; i < dxs.length ; i++) {
-      angle = atan2(dys[i], dxs[i]);
-      drawSegment((int)tmpX, (int)tmpY, angle);
-      tmpX -= cos(angle) * segmentLength;
-      tmpY -= sin(angle) * segmentLength;
-//      if (i > 0) {
-//        dys[i] = dys[i - 1];
-//        dxs[i] = dxs[i - 1];
-//      }
+    for (int i=1 ; i < xs.length ; i++) {
+//      angle = atan2(ys[i], xs[i]);
+      drawSegment(xs[i-1], ys[i-1], xs[i], ys[i]);
     }
-    
-    prevMouseX = mouseX;
-    prevMouseY = mouseY;
   //}
 }
 
@@ -103,26 +91,24 @@ void takeScreenShot() {
   screenShotCounter++;
 }
 
-void drawSegment(int x, int y, float angle) {
+void drawSegment(int x1, int y1, int x2, int y2) {
   pushMatrix();
   
   // move coords
-  translate(x, y);
-  rotate(angle);
   
   // draw element
-  ellipse(0, 0, 30, 20);
-//  stroke(color(0, 0, 0, 255));
-//  strokeWeight(10);
-//  line(0, 0, segmentLength, 0);
+//  ellipse(0, 0, 30, 20);
+  stroke(color(0, 0, 0, 160));
+  strokeWeight(10);
+  line(x1, y1, x2, y2);
   
   popMatrix();
 }
 
-void shiftDeltas() {
-  for (int i = (dxs.length - 2) ; i >= 0 ; i--) {
-    dxs[i+1] = dxs[i];
-    dys[i+1] = dys[i];
+void shiftCoords() {
+  for (int i = (xs.length - 2) ; i >= 0 ; i--) {
+    xs[i+1] = xs[i];
+    ys[i+1] = ys[i];
   }
 }
 
