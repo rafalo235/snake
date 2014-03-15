@@ -11,21 +11,20 @@ int screenShotCounter = 0;
 String screenShotExtension = ".png";
 
 int prevMouseX = 0, prevMouseY = 0;
-int segmentLength = 10;
+int segmentLength = 4;
 
-int[] xs = new int[20];
-int[] ys = new int[20];
+float[] xs = new float[50];
+float[] ys = new float[50];
 
 /* --- INITIALIZATION --- */
 void setup() {
-  for (int i=0 ; i< xs.length ; i++) {
-    xs[i] = ys[i] = 0;
-  }
-  
+//  for (int i=0 ; i< xs.length ; i++) {
+//    xs[i] = 0;
+//    ys[i] = 0;
+//  }
   size(sizeX, sizeY);
   smooth();
   background = loadImage(backgroundPath);
-  
   image(background, 0, 0, sizeX, sizeY);
 }
 
@@ -33,25 +32,28 @@ void setup() {
 
 /* --- MAIN LOOP --- */
 void draw() {
-//  float angle = 0;
-  
-  if (    mouseY != ys[0]
-      ||  mouseX != xs[0]) {
+  float angle = 0, segmentWidth;
+  int redGreen, i;
     
-    /* Count delta of move */
-    shiftCoords();
-    ys[0] = mouseY;
-    xs[0] = mouseX;
+  /* Get actual coords */
+  ys[0] = mouseY;
+  xs[0] = mouseX;
+    
+  /* Drawing */
+  image(background, 0, 0, sizeX, sizeY);
+  for (i = 0 ; i < (xs.length - 1) ; i++) {
+    angle = atan2(ys[i] - ys[i+1], xs[i] - xs[i+1]);
+    xs[i+1] = xs[i] - cos(angle) * segmentLength;
+    ys[i+1] = ys[i] - sin(angle) * segmentLength;
   }
-    
-    /* Drawing */
-    
-    image(background, 0, 0, sizeX, sizeY);
-    for (int i=1 ; i < xs.length ; i++) {
-//      angle = atan2(ys[i], xs[i]);
-      drawSegment(xs[i-1], ys[i-1], xs[i], ys[i]);
-    }
-  //}
+  
+  for (i = (xs.length - 2) ; i >= 0 ; i --) {
+    angle = atan2(ys[i] - ys[i+1], xs[i] - xs[i+1]);
+    segmentWidth = 10 - ((float)i / (float)xs.length) * ((float)i / (float)xs.length) * ((float)i / (float)xs.length) * 10;
+    redGreen = 204 - (int) ((float)i / (float)xs.length * 153);
+    drawSegment(xs[i], ys[i], angle, color(redGreen, redGreen, 0 ), segmentWidth);
+  }
+  drawEyes(xs[0], ys[0], angle);
 }
 
 
@@ -91,24 +93,32 @@ void takeScreenShot() {
   screenShotCounter++;
 }
 
-void drawSegment(int x1, int y1, int x2, int y2) {
+void drawSegment(float x, float y, float angle, color c, float segmentWidth) {
   pushMatrix();
   
   // move coords
+  translate(x, y);
+  rotate(angle);
   
   // draw element
-//  ellipse(0, 0, 30, 20);
-  stroke(color(0, 0, 0, 160));
-  strokeWeight(10);
-  line(x1, y1, x2, y2);
+  fill(c);
+  noStroke();
+  ellipse(0, 0, 15, segmentWidth);
   
   popMatrix();
 }
 
-void shiftCoords() {
-  for (int i = (xs.length - 2) ; i >= 0 ; i--) {
-    xs[i+1] = xs[i];
-    ys[i+1] = ys[i];
-  }
+void drawEyes(float x, float y, float angle) {
+  pushMatrix();
+  
+  translate(x, y);
+  rotate(angle);
+  
+  stroke(color(0,0,0));
+  strokeWeight(3);
+  point(-1, 2);
+  point(-1, -2);
+  
+  popMatrix();
 }
 
