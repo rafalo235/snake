@@ -10,18 +10,13 @@ String screenShotFileName = "screen-";
 int screenShotCounter = 0;
 String screenShotExtension = ".png";
 
-int prevMouseX = 0, prevMouseY = 0;
-int segmentLength = 4;
+int segmentLength = 2;
 
-float[] xs = new float[50];
-float[] ys = new float[50];
+float[] xs = new float[100];
+float[] ys = new float[100];
 
 /* --- INITIALIZATION --- */
 void setup() {
-//  for (int i=0 ; i< xs.length ; i++) {
-//    xs[i] = 0;
-//    ys[i] = 0;
-//  }
   size(sizeX, sizeY);
   smooth();
   background = loadImage(backgroundPath);
@@ -32,7 +27,7 @@ void setup() {
 
 /* --- MAIN LOOP --- */
 void draw() {
-  float angle = 0, segmentWidth;
+  float angle = 0, segmentWidth, rate;
   int redGreen, i;
     
   /* Get actual coords */
@@ -49,8 +44,9 @@ void draw() {
   
   for (i = (xs.length - 2) ; i >= 0 ; i --) {
     angle = atan2(ys[i] - ys[i+1], xs[i] - xs[i+1]);
-    segmentWidth = 10 - ((float)i / (float)xs.length) * ((float)i / (float)xs.length) * ((float)i / (float)xs.length) * 10;
-    redGreen = 204 - (int) ((float)i / (float)xs.length * 153);
+    rate = (float) i / (float)xs.length;
+    segmentWidth = 10 - rate * rate * rate * 10;
+    redGreen = 204 - (int) (rate * 153);
     drawSegment(xs[i], ys[i], angle, color(redGreen, redGreen, 0 ), segmentWidth);
   }
   drawEyes(xs[0], ys[0], angle);
@@ -101,9 +97,13 @@ void drawSegment(float x, float y, float angle, color c, float segmentWidth) {
   rotate(angle);
   
   // draw element
-  fill(c);
-  noStroke();
-  ellipse(0, 0, 15, segmentWidth);
+  //fill(c);
+  //noStroke();
+  //ellipse(0, 0, 15, segmentWidth);
+  stroke(c);
+  strokeWeight(segmentWidth);
+  line(0,0,segmentLength,0);
+  
   
   popMatrix();
 }
@@ -115,9 +115,9 @@ void drawEyes(float x, float y, float angle) {
   rotate(angle);
   
   stroke(color(0,0,0));
-  strokeWeight(3);
-  point(-1, 2);
-  point(-1, -2);
+  strokeWeight(2);
+  point(1, 2);
+  point(1, -2);
   
   popMatrix();
 }
