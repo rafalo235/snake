@@ -15,6 +15,9 @@ int segmentLength = 2;
 float[] xs = new float[100];
 float[] ys = new float[100];
 
+float nailX = 250;
+float nailY = 250;
+
 /* --- INITIALIZATION --- */
 void setup() {
   size(sizeX, sizeY);
@@ -33,6 +36,7 @@ void draw() {
   /* Get actual coords */
   ys[0] = mouseY;
   xs[0] = mouseX;
+  
     
   /* Drawing */
   image(background, 0, 0, sizeX, sizeY);
@@ -40,6 +44,14 @@ void draw() {
     angle = atan2(ys[i] - ys[i+1], xs[i] - xs[i+1]);
     xs[i+1] = xs[i] - cos(angle) * segmentLength;
     ys[i+1] = ys[i] - sin(angle) * segmentLength;
+  }
+  
+  ys[xs.length - 1] = nailY;
+  xs[xs.length - 1] = nailX;
+  for (i = (xs.length - 1) ; i > 0 ; i--) {
+    angle = atan2(ys[i-1] - ys[i], xs[i-1] - xs[i]);
+    xs[i-1] = xs[i] + cos(angle) * segmentLength;
+    ys[i-1] = ys[i] + sin(angle) * segmentLength;
   }
   
   for (i = (xs.length - 2) ; i >= 0 ; i --) {
